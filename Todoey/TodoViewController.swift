@@ -9,11 +9,11 @@
 import UIKit
 
 class TodoViewController: UITableViewController {
-
-    let itemArray = ["The don","Kalimwenjuma","Qlicue","Xcode"]
+    
+    var itemArray = ["The don","Kalimwenjuma","Qlicue","Xcode"]
     override func viewDidLoad() {
         super.viewDidLoad()
-       
+        
     }
     
     //MARK: - TableView datasource method..
@@ -26,7 +26,7 @@ class TodoViewController: UITableViewController {
         cell.textLabel?.text = itemArray[indexPath.row]
         return cell 
     }
-
+    
     //MARK: - TableView Delegate methods
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark{
@@ -35,6 +35,27 @@ class TodoViewController: UITableViewController {
             tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
         }
         tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+    //MARK: - Add new Items
+    @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
+        var textField = UITextField()
+        
+        let alert = UIAlertController(title: "Add a new Todoey", message: "", preferredStyle: .alert)
+        let action = UIAlertAction(title: "Add Item", style: .default) { (action) in
+            //what will happen once the user clicks the add button
+            // print(textField.text!)
+            self.itemArray.append(textField.text!)
+            self.tableView.reloadData()
+            
+        }
+        alert.addTextField { (alertTextField) in
+            alertTextField.placeholder = "Create new item"
+            textField = alertTextField
+        }
+        alert.addAction(action)
+        
+        present(alert, animated: true, completion: nil)
     }
 }
 
