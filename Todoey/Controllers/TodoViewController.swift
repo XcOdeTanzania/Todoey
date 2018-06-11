@@ -48,7 +48,8 @@ class TodoViewController: UITableViewController {
         if let item = todoItems?[indexPath.row]{
             do{
                 try realm.write {
-                    item.done = !item.done
+                  //  item.done = !item.done
+                  realm.delete(item)
                 }
             }catch{
                 print("Error saving done status, \(error)")
