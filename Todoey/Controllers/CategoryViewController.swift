@@ -9,12 +9,12 @@
 import UIKit
 import RealmSwift
 
-class CategoryViewController: UITableViewController {
+class CategoryViewController: SwipeTableViewController {
     
     let realm = try! Realm()
     
     var category: Results<Category>?
-    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         loadCategories();
@@ -29,15 +29,15 @@ class CategoryViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath)
-        cell.textLabel?.text = self.category?[indexPath.row].name ?? "No Categories Added yet"
+        let cell = super.tableView(tableView, cellForRowAt: indexPath)
+        cell.textLabel?.text = category?[indexPath.row].name ?? "No Categories Added Yet"
+        
         return cell
     }
     
     //MARK: - ableView Delegate methods
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-       // tableView.deselectRow(at: indexPath, animated: true)
         performSegue(withIdentifier: "goToItems", sender: self)
     }
     
@@ -70,6 +70,19 @@ class CategoryViewController: UITableViewController {
     func loadCategories(){
         category = realm.objects(Category.self)
     }
+    
+    //MARk:- Delete Data from swipe
+    override func updateModel(at indexPath: IndexPath) {
+                    if let categoryForDeletion = self.category?[indexPath.row]{
+                        do{
+                            try self.realm.write {
+                                self.realm.delete(categoryForDeletion)
+                            }
+                        }catch{
+                            print("Error while writing data \(error)")
+                        }
+                    }
+    }
     //MARK:- Add New Categories
     
     @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
@@ -92,6 +105,8 @@ class CategoryViewController: UITableViewController {
         alert.addAction(action)
         
         present(alert, animated: true, completion: nil)
-
+        
     }
 }
+
+
